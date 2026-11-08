@@ -42,15 +42,50 @@ function App() {
   const [loadingFeed, setLoadingFeed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [notice, setNotice] = useState("");
-  const filteredJobs = useMemo(
-    () => sampleJobs.filter((job) => `${job.role} ${job.company} ${job.category}`.toLowerCase().includes(query.toLowerCase())),
-    [query],
-  );
-
-  const startDemo = () => {
-    setNotice("Demo mode: connect a job source and workflow engine to run a real discovery cycle.");
+  const loadJobs = async () => {
+    setLoadingFeed(true);
+    try {
+      const response = await fetch("/api/jobs?limit=50");
+      if (!response.ok) throw new Error("Job API returned " + response.status);
+      const data = await response.json();
+      const liveJobs: Job[] = (data.jobs ?? []).map((item: any) => ({
+        id: item.id,
+        role: item.title,
+        company: item.company,
+        location: item.location || "Location not specified",
+        type: item.employment_type || "Not specified",
+        category: item.department || item.team || "Job listing",
+        match: null,
+        status: "New",
+        source: item.source_name || item.source_provider || "Job source",
+        age: item.published_at ? new Date(item.published_at).toLocaleDateString() : "Date not supplied",
+      }));
+      if (liveJobs.length) {
+        setJobs(liveJobs);
+        setFeedMode("live");
+        setNotice("");
+      } else {
+        setJobs(sampleJobs);
+        setFeedMode("preview");
+        setNotice("No live vacancies are stored yet. Configure job sources and run the protected discovery endpoint.");
+      }
+    } catch {
+      setJobs(sampleJobs);
+      setFeedMode("unavailable");
+      setNotice("The live job API is not available yet. Showing clearly labelled preview records.");
+    } finally {
+      setLoadingFeed(false);
+    }
   };
 
+  useEffect(() => { void loadJobs(); }, []);
+
+  const filteredJobs = useMemo(
+    () => jobs.filter((job) => (job.role + " " + job.company + " " + job.category).toLowerCase().includes(query.toLowerCase())),
+    [jobs, query],
+  );
+
+  const startDemo = () => { void loadJobs(); };
   return (
     <div className="app-shell">
       <aside className={`sidebar ${menuOpen ? "sidebar-open" : ""}`}>
