@@ -1,0 +1,14 @@
+name = "hirepilot-api"
+main = "src/index.ts"
+compatibility_date = "2026-11-08"
+
+[vars]
+ALLOWED_ORIGIN = "*"
+# Configure ATS_BOARDS in Cloudflare Worker variables after adding employer board identifiers.
+# Example: {"greenhouse":["board-token"],"lever":["site-name"],"ashby":["job-board-name"]}
+
+[[d1_databases]]
+binding = "DB"
+database_name = "hirepilot-db"
+database_id = "REPLACE_WITH_CLOUDFLARE_D1_DATABASE_ID"
+migrations_dir = "migrations"
