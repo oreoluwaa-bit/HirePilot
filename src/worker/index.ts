@@ -76,19 +76,19 @@ async function handleApi(request: Request, env: Env): Promise<Response> {
     const limit = Math.min(Math.max(Number(url.searchParams.get("limit") ?? 50), 1), 100);
     const search = (url.searchParams.get("q") ?? "").trim();
     const workplace = url.searchParams.get("workplace");
-    const conditions = ["is_active = 1"];
+    const conditions = ["jobs.is_active = 1"];
     const values: (string | number | null)[] = [];
     if (search) {
-      conditions.push("(title LIKE ? OR company LIKE ? OR description LIKE ?)");
+      conditions.push("(jobs.title LIKE ? OR jobs.company LIKE ? OR jobs.description LIKE ?)");
       values.push("%" + search + "%", "%" + search + "%", "%" + search + "%");
     }
     if (workplace && ["remote", "hybrid", "on-site"].includes(workplace)) {
-      conditions.push("workplace_type = ?");
+      conditions.push("jobs.workplace_type = ?");
       values.push(workplace);
     }
     const rows = await env.DB.prepare(
-      "SELECT id, source_id, title, company, location, workplace_type, employment_type, department, team, description, job_url, apply_url, published_at, country_code, first_seen_at, last_seen_at FROM jobs WHERE " +
-      conditions.join(" AND ") + " ORDER BY COALESCE(published_at, first_seen_at) DESC LIMIT ?"
+      "SELECT jobs.id, jobs.source_id, job_sources.provider AS source_provider, job_sources.display_name AS source_name, jobs.title, jobs.company, jobs.location, jobs.workplace_type, jobs.employment_type, jobs.department, jobs.team, jobs.description, jobs.job_url, jobs.apply_url, jobs.published_at, jobs.country_code, jobs.first_seen_at, jobs.last_seen_at FROM jobs JOIN job_sources ON job_sources.id = jobs.source_id WHERE " +
+      conditions.join(" AND ") + " ORDER BY COALESCE(jobs.published_at, jobs.first_seen_at) DESC LIMIT ?"
     ).bind(...values, limit).all();
     return json({ jobs: rows.results, count: rows.results.length });
   }
