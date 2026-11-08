@@ -39,7 +39,18 @@ function json(data: unknown, status = 200, origin = "*") {
 
 function cleanText(value: unknown): string {
   if (typeof value !== "string") return "";
-  return value.replace(/<script[\s\S]*?<\/script>/gi, " ").replace(/<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " ").replace(/&nbsp;/gi, " ").replace(/&amp;/gi, "&").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">").replace(/&#39;/gi, "'").replace(/&quot;/gi, '"').replace(/\s+/g, " ").trim();
+  return value
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&#39;/gi, "'")
+    .replace(/&quot;/gi, '"')
+    .replace(/<script[\\s\\S]*?<\\/script>/gi, " ")
+    .replace(/<style[\\s\\S]*?<\\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\\s+/g, " ")
+    .trim();
 }
 
 function safeDate(value: unknown): string | null {
@@ -218,8 +229,8 @@ async function discover(env: Env) {
     }
   });
 
-  const existing = await env.DB.prepare("SELECT canonical_url FROM jobs WHERE is_active = 1").all<{ canonical_url: string }>();
-  const knownUrls = new Set((existing.results || []).map((row) => row.canonical_url));
+  const existing = await env.DB.prepare("SELECT canonical_url, source, external_id FROM jobs WHERE is_active = 1").all<{ canonical_url: string; source: string; external_id: string }>();
+  const knownUrls = new Map((existing.results || []).map((row) => [row.canonical_url, row.source + "|" + row.external_id]));
   const seenThisRun = new Set<string>();
   let inserted = 0;
   let updated = 0;
@@ -229,7 +240,10 @@ async function discover(env: Env) {
   for (const job of jobs) {
     if (seenThisRun.has(job.canonicalUrl)) { duplicates++; continue; }
     seenThisRun.add(job.canonicalUrl);
-    const wasKnown = knownUrls.has(job.canonicalUrl);
+    const currentKey = job.source + "|" + job.externalId;
+    const existingKey = knownUrls.get(job.canonicalUrl);
+    if (existingKey && existingKey !== currentKey) { duplicates++; continue; }
+    const wasKnown = existingKey === currentKey;
     await env.DB.prepare(`INSERT INTO jobs
       (source, external_id, title, company, location, workplace, employment_type, category, description, published_at, canonical_url, source_url, raw_json, first_seen_at, last_seen_at, is_active)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
@@ -243,7 +257,7 @@ async function discover(env: Env) {
       .bind(job.source, job.externalId, job.title, job.company, job.location, job.workplace, job.employmentType, job.category, job.description, job.publishedAt, job.canonicalUrl, job.sourceUrl, JSON.stringify(job.raw), now, now)
       .run();
     if (wasKnown) updated++; else inserted++;
-    knownUrls.add(job.canonicalUrl);
+    knownUrls.set(job.canonicalUrl, currentKey);
   }
 
   const errors = results.filter((item) => item.error).length;
