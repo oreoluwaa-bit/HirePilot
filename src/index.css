@@ -192,3 +192,49 @@ h2 { color: #294947; font: 700 14px Manrope, sans-serif; margin: 0 0 4px; letter
   .page-footer { flex-wrap: wrap; gap: 10px 16px; }
   .page-footer span:nth-child(2) { margin-left: 0; order: 3; width: 100%; }
 }
+
+
+/* Job discovery centre */
+.discovery-connection, .run-summary, .discovered-jobs { padding: 18px; margin-bottom: 18px; }
+.discovery-config, .token-entry { display: flex; align-items: end; gap: 12px; }
+.discovery-config { margin: 12px 0; }
+.discovery-config label, .token-entry label { flex: 1; min-width: 0; display: grid; gap: 7px; color: #58716d; font-size: 10px; font-weight: 700; }
+.discovery-config input, .token-entry input { width: 100%; min-width: 0; border: 1px solid #e3eeea; background: #fbfdfc; border-radius: 7px; padding: 10px 11px; outline: none; color: #294947; font-size: 11px; }
+.discovery-config input:focus, .token-entry input:focus { border-color: #73c4b6; box-shadow: 0 0 0 3px #e1f9f4; }
+.token-entry { padding-top: 13px; border-top: 1px solid #edf3f1; }
+.token-entry label > span { display: flex; align-items: center; gap: 5px; }
+.token-entry label small { color: #9aa9a6; font-weight: 400; }
+.discovery-connection .notice { margin: 14px 0 0; }
+.connection-badge.is-connected { color: #147b70; background: #e9f8f3; }
+.connection-badge.is-connected i { background: #36a68f; }
+.discovery-stats { margin: 18px 0; }
+.run-summary { margin-bottom: 18px; }
+.run-metrics { display: flex; flex-wrap: wrap; gap: 12px 24px; padding: 10px 0 15px; color: #82938f; font-size: 10px; }
+.run-metrics strong { color: #087b72; font: 700 16px Manrope; margin-right: 4px; }
+.source-results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.source-result { display: flex; align-items: center; gap: 8px; background: #f8fbfa; border: 1px solid #edf3f1; border-radius: 7px; padding: 9px; min-width: 0; font-size: 9px; color: #8a9a96; }
+.source-result strong { color: #45615c; font-size: 10px; }
+.source-result > span:last-child { margin-left: auto; text-align: right; overflow-wrap: anywhere; }
+.source-ok { color: #168a79; }
+.source-error { color: #c16a58; }
+.discovered-jobs { padding-bottom: 4px; }
+.discovery-job-list { display: grid; }
+.discovery-job { display: flex; align-items: flex-start; gap: 12px; padding: 15px 2px; border-bottom: 1px solid #edf3f1; }
+.discovery-job-main { flex: 1; min-width: 0; }
+.discovery-job-main > strong { display: block; color: #36514e; font-size: 11px; margin: 1px 0 4px; }
+.discovery-job-main > span { color: #8b9b98; font-size: 9px; }
+.discovery-job-main > p { color: #82938f; font-size: 9px; line-height: 1.6; margin: 8px 0 0; }
+.job-open-link { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; color: #018081; text-decoration: none; font-size: 9px; font-weight: 700; padding-top: 3px; }
+.job-open-link:hover { text-decoration: underline; }
+.discovery-empty { display: grid; justify-items: center; text-align: center; padding: 42px 15px; color: #8aa09a; }
+.discovery-empty > svg { color: #018081; margin-bottom: 12px; }
+.discovery-empty strong { color: #45615c; font: 700 13px Manrope; }
+.discovery-empty p { max-width: 330px; color: #91a19d; font-size: 10px; line-height: 1.6; margin: 6px 0 0; }
+.primary-button:disabled, .outline-button:disabled { opacity: .6; cursor: wait; }
+@media (max-width: 650px) {
+  .discovery-config, .token-entry { align-items: stretch; flex-direction: column; }
+  .discovery-config > button, .token-entry > button { justify-content: center; }
+  .source-results { grid-template-columns: 1fr; }
+  .discovery-job { flex-wrap: wrap; }
+  .job-open-link { margin-left: 46px; }
+}
