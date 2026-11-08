@@ -47,7 +47,8 @@ function App() {
   const loadJobs = async () => {
     setLoadingFeed(true);
     try {
-      const response = await fetch("/api/jobs?limit=50");
+      const apiBase = (localStorage.getItem("hirepilot_api_url") || "").replace(/\\/$/, "");
+      const response = await fetch(apiBase + "/api/jobs?limit=50");
       if (!response.ok) throw new Error("Job API returned " + response.status);
       const data = await response.json();
       const liveJobs: Job[] = (data.jobs ?? []).map((item: any) => ({
