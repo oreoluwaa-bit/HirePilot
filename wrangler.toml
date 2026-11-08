@@ -14,3 +14,6 @@ database_id = "REPLACE_WITH_CLOUDFLARE_D1_DATABASE_ID"
 
 [vars]
 APP_ENV = "development"
+
+[triggers]
+crons = ["0 */6 * * *"]
