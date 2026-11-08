@@ -40,3 +40,14 @@ A Cloudflare cron trigger can be added after deployment. The Worker exports a sc
 - Lever and Ashby fields vary by employer and may be absent. Missing values remain null rather than being guessed.
 - Remote does not automatically mean worldwide. Country eligibility will be evaluated in a later matching phase.
 - These discovery adapters do not submit applications.
+
+
+## Remotive (remote-only feed)
+Enable by setting REMOTIVE_ENABLED=true. Endpoint: GET https://remotive.com/api/remote-jobs?limit=500.
+Remotive's public API asks downstream job boards to link to the canonical listing and identify Remotive as the source. The API feed is delayed by 24 hours and should be refreshed no more than four times daily. HirePilot's scheduled refresh should respect that limit.
+Official documentation and terms: https://github.com/remotive-com/remote-jobs-api
+
+## Arbeitnow
+Enable by setting ARBEITNOW_ENABLED=true. Public feed endpoint: GET https://www.arbeitnow.com/api/job-board-api.
+Arbeitnow is strongest for Germany and Europe-focused opportunities, so it is an additional source rather than a worldwide-remote guarantee. Link to the original listing.
+Official API overview: https://www.arbeitnow.com/blog/job-board-api
