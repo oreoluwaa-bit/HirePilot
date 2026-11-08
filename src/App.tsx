@@ -16,6 +16,7 @@ type Job = {
   match: number | null;
   status: string;
   source?: string;
+  jobUrl?: string;
   age: string;
 };
 
@@ -58,6 +59,7 @@ function App() {
         match: null,
         status: "New",
         source: item.source_name || item.source_provider || "Job source",
+        jobUrl: item.job_url,
         age: item.published_at ? new Date(item.published_at).toLocaleDateString() : "Date not supplied",
       }));
       if (liveJobs.length) {
