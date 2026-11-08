@@ -51,8 +51,8 @@ export default function DiscoveryPage() {
         fetch(base + "/api/jobs?limit=50" + (query ? "&q=" + encodeURIComponent(query) : "")),
       ]);
       if (!healthResponse.ok || !jobsResponse.ok) throw new Error("API returned HTTP " + (!healthResponse.ok ? healthResponse.status : jobsResponse.status));
-      const healthData = await healthResponse.json();
-      const jobData = await jobsResponse.json();
+      const healthData = await healthResponse.json() as { database?: boolean };
+      const jobData = await jobsResponse.json() as { jobs?: ApiJob[]; total?: number };
       setHealth(healthData.database ? "connected" : "offline");
       setJobs(jobData.jobs || []);
       setTotal(jobData.total || 0);
@@ -86,7 +86,7 @@ export default function DiscoveryPage() {
         method: "POST",
         headers: { authorization: "Bearer " + token.trim(), "content-type": "application/json" },
       });
-      const result = await response.json();
+      const result = await response.json() as RunResult & { error?: string };
       if (!response.ok) throw new Error(result.error || "Discovery request failed.");
       setRun(result);
       setToken("");
