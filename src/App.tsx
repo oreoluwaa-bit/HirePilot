@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import DiscoveryPage from "./DiscoveryPage";
 import {
   Activity, ArrowDownRight, ArrowUpRight, Bell, BriefcaseBusiness,
   Check, ChevronDown, CircleHelp, FileText, Filter, Globe2,
@@ -55,11 +56,11 @@ function App() {
         company: item.company,
         location: item.location || "Location not specified",
         type: item.employment_type || "Not specified",
-        category: item.department || item.team || "Job listing",
+        category: item.category || "Job listing",
         match: null,
         status: "New",
-        source: item.source_name || item.source_provider || "Job source",
-        jobUrl: item.job_url,
+        source: item.source || "Job source",
+        jobUrl: item.source_url,
         age: item.published_at ? new Date(item.published_at).toLocaleDateString() : "Date not supplied",
       }));
       if (liveJobs.length) {
@@ -132,7 +133,7 @@ function App() {
           </div>
         </header>
 
-        <div className="page-wrap">
+        {activeNav === "Job discovery" ? <DiscoveryPage /> : <div className="page-wrap">
           <section className="welcome-row">
             <div>
               <div className="eyebrow"><span className="eyebrow-line" /> YOUR CAREER COMMAND CENTRE</div>
@@ -192,7 +193,7 @@ function App() {
           </div>
 
           <footer className="page-footer"><span>© 2026 HirePilot</span><span><i /> Built for transparent, responsible automation</span><button onClick={() => setNotice("Help centre documentation will be added as the product develops.")}><CircleHelp size={14} /> Help & feedback</button></footer>
-        </div>
+        </div>}
       </main>
     </div>
   );
