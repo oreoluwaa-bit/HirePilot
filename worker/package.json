@@ -1,0 +1,16 @@
+{
+  "name": "hirepilot-worker",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "deploy": "wrangler deploy",
+    "migrate:remote": "wrangler d1 migrations apply hirepilot-db --remote"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20261108.0",
+    "typescript": "^5.7.2",
+    "wrangler": "^4.45.0"
+  }
+}
