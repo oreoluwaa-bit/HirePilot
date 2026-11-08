@@ -12,12 +12,13 @@
 ## Phase 1 — Real job discovery
 - [ ] Define D1 schema and migrations.
 - [ ] Implement Worker API foundation.
-- [ ] Connect three permitted real job sources.
 - [ ] Normalise jobs and preserve source attribution.
 - [ ] Deduplicate by source ID and canonical URL.
 - [ ] Add eligibility and remote-country checks.
 - [ ] Persist and display real vacancies.
-- [ ] Add scheduled refresh and ingestion run logs.
+- [x] Add scheduled handler and ingestion run logs.
+- [ ] Configure real employer board identifiers and verify a live ingestion run.
+- [ ] Apply the D1 migration and deploy the Worker.
 
 ## Phase 2 — Candidate profile and matching
 - [ ] CV upload to private R2 storage.
