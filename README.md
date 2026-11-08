@@ -35,8 +35,8 @@ AI-powered job discovery and application automation for **all career fields**.
 - Respect source terms, rate limits, and employer application restrictions.
 - Store API keys and credentials as service secrets; never commit them.
 
-## Current status
-This repository contains the initial web application scaffold and product foundation. Live job ingestion, AI processing, Activepieces workflows, and application submission are **not yet connected**. They will be implemented and tested in stages.
+## Job sources\n- Greenhouse, Lever, and Ashby: employer-specific public ATS boards; configure their board identifiers in Worker variables.\n- Remotive: public remote jobs feed; source attribution is retained and the scheduled refresh is limited to four checks per day.\n- Arbeitnow: public Germany/Europe-focused feed; not a worldwide-remote guarantee.\n- See docs/JOB_SOURCE_SETUP.md for setup and source restrictions.\n\n## Current status
+This repository now includes a responsive React dashboard, a Cloudflare Worker API, an initial D1 schema, and five discovery adapters: Greenhouse, Lever, Ashby, Remotive, and Arbeitnow. The dashboard reads persisted jobs from the API and keeps preview records visibly labelled. The source adapters and UI are implemented but still require Cloudflare deployment, D1 migration, and a verified live ingestion run. AI matching, Activepieces workflows, CV processing, and application submission are not connected yet.
 
 ## Run locally
 Requires Node.js 20+.
