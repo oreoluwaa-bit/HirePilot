@@ -2,7 +2,7 @@ PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS job_sources (
   id TEXT PRIMARY KEY,
-  provider TEXT NOT NULL CHECK (provider IN ('greenhouse', 'lever', 'ashby')),
+  provider TEXT NOT NULL CHECK (provider IN ('greenhouse', 'lever', 'ashby', 'remotive', 'arbeitnow')),
   board_key TEXT NOT NULL,
   display_name TEXT NOT NULL,
   is_enabled INTEGER NOT NULL DEFAULT 1,
