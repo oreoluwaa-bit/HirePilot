@@ -77,7 +77,7 @@ async function handleApi(request: Request, env: Env): Promise<Response> {
     const search = (url.searchParams.get("q") ?? "").trim();
     const workplace = url.searchParams.get("workplace");
     const conditions = ["is_active = 1"];
-    const values: unknown[] = [];
+    const values: (string | number | null)[] = [];
     if (search) {
       conditions.push("(title LIKE ? OR company LIKE ? OR description LIKE ?)");
       values.push("%" + search + "%", "%" + search + "%", "%" + search + "%");
