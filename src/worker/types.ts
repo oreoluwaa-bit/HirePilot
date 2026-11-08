@@ -6,9 +6,11 @@ export interface Env {
   GREENHOUSE_BOARDS?: string;
   LEVER_SITES?: string;
   ASHBY_BOARDS?: string;
+  REMOTIVE_ENABLED?: string;
+  ARBEITNOW_ENABLED?: string;
 }
 
-export type Provider = "greenhouse" | "lever" | "ashby";
+export type Provider = "greenhouse" | "lever" | "ashby" | "remotive" | "arbeitnow";
 export type WorkplaceType = "remote" | "hybrid" | "on-site" | "unknown";
 
 export interface NormalizedJob {
