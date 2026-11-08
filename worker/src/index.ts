@@ -282,6 +282,9 @@ async function listJobs(request: Request, env: Env, origin: string) {
 }
 
 export default {
+  async scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
+    ctx.waitUntil(discover(env));
+  },
   async fetch(request: Request, env: Env): Promise<Response> {
     const origin = env.ALLOWED_ORIGIN || "*";
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: { "access-control-allow-origin": origin, "access-control-allow-headers": "content-type, authorization", "access-control-allow-methods": "GET, POST, OPTIONS" } });
