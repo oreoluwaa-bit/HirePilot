@@ -10,12 +10,12 @@
 - [ ] Connect Cloudflare deployment.
 
 ## Phase 1 — Real job discovery
-- [ ] Define D1 schema and migrations.
-- [ ] Implement Worker API foundation.
-- [ ] Normalise jobs and preserve source attribution.
-- [ ] Deduplicate by source ID and canonical URL.
+- [x] Define the initial D1 schema and migration.
+- [x] Implement Worker API foundation (health, jobs, discovery trigger, and run history).
+- [x] Normalise Greenhouse, Lever, and Ashby job records and preserve source attribution.
+- [x] Deduplicate by source and source job ID.
 - [ ] Add eligibility and remote-country checks.
-- [ ] Persist and display real vacancies.
+- [x] Persist vacancies in D1; connect the live UI feed after deployment.
 - [x] Add scheduled handler and ingestion run logs.
 - [ ] Configure real employer board identifiers and verify a live ingestion run.
 - [ ] Apply the D1 migration and deploy the Worker.
