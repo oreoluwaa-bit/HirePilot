@@ -90,6 +90,49 @@ function normalizeAshby(board: string, item: any): NormalizedJob {
   };
 }
 
+
+function normalizeRemotive(item: any): NormalizedJob {
+  return {
+    sourceJobId: String(item.id),
+    title: item.title ?? "Untitled role",
+    company: item.company_name ?? "Unknown company",
+    location: item.candidate_required_location ?? "Remote location not specified",
+    workplaceType: "remote",
+    employmentType: item.job_type ?? null,
+    department: item.category ?? null,
+    team: null,
+    description: cleanText(item.description),
+    descriptionHtml: item.description ?? null,
+    jobUrl: item.url,
+    applyUrl: item.url,
+    publishedAt: item.publication_date ?? null,
+    updatedAtSource: null,
+    countryCode: null,
+    raw: item,
+  };
+}
+
+function normalizeArbeitnow(item: any): NormalizedJob {
+  return {
+    sourceJobId: String(item.slug ?? item.id ?? item.url),
+    title: item.title ?? "Untitled role",
+    company: item.company_name ?? item.company ?? "Unknown company",
+    location: item.location ?? null,
+    workplaceType: item.remote === true ? "remote" : workplace(item.remote),
+    employmentType: item.job_types?.join(", ") ?? item.job_type ?? null,
+    department: item.category ?? item.categories?.join(", ") ?? null,
+    team: null,
+    description: cleanText(item.description),
+    descriptionHtml: item.description ?? null,
+    jobUrl: item.url,
+    applyUrl: item.url,
+    publishedAt: item.created_at ?? item.createdAt ?? item.date ?? null,
+    updatedAtSource: null,
+    countryCode: null,
+    raw: item,
+  };
+}
+
 export async function fetchSource(source: SourceConfig): Promise<{ source: SourceConfig; jobs: NormalizedJob[] }> {
   if (source.provider === "greenhouse") {
     const url = "https://boards-api.greenhouse.io/v1/boards/" + encodeURIComponent(source.boardKey) + "/jobs?content=true";
@@ -106,11 +149,20 @@ export async function fetchSource(source: SourceConfig): Promise<{ source: Sourc
     const data = await getJson(url);
     return { source, jobs: (data.jobs ?? []).filter((x: any) => x.isListed !== false && x.jobUrl).map((x: any) => normalizeAshby(source.boardKey, x)) };
   }
+  if (source.provider === "remotive") {
+    const data = await getJson("https://remotive.com/api/remote-jobs?limit=500");
+    return { source, jobs: (data.jobs ?? []).filter((x: any) => x.url).map(normalizeRemotive) };
+  }
+  if (source.provider === "arbeitnow") {
+    const data = await getJson("https://www.arbeitnow.com/api/job-board-api");
+    const records = Array.isArray(data) ? data : (data.data ?? data.jobs ?? []);
+    return { source, jobs: records.filter((x: any) => x.url).map(normalizeArbeitnow) };
+  }
   const unreachable: never = source.provider as never;
   throw new Error("Unsupported provider: " + String(unreachable));
 }
 
-export function configuredSources(env: { GREENHOUSE_BOARDS?: string; LEVER_SITES?: string; ASHBY_BOARDS?: string }): SourceConfig[] {
+export function configuredSources(env: { GREENHOUSE_BOARDS?: string; LEVER_SITES?: string; ASHBY_BOARDS?: string; REMOTIVE_ENABLED?: string; ARBEITNOW_ENABLED?: string }): SourceConfig[] {
   const parse = (value: string | undefined, provider: Provider) =>
     (value ?? "").split(",").map((x) => x.trim()).filter(Boolean).map((boardKey) => ({
       provider,
@@ -121,5 +173,7 @@ export function configuredSources(env: { GREENHOUSE_BOARDS?: string; LEVER_SITES
     ...parse(env.GREENHOUSE_BOARDS, "greenhouse"),
     ...parse(env.LEVER_SITES, "lever"),
     ...parse(env.ASHBY_BOARDS, "ashby"),
+    ...(env.REMOTIVE_ENABLED === "true" ? [{ provider: "remotive" as Provider, boardKey: "public", displayName: "Remotive" }] : []),
+    ...(env.ARBEITNOW_ENABLED === "true" ? [{ provider: "arbeitnow" as Provider, boardKey: "public", displayName: "Arbeitnow" }] : []),
   ];
 }
