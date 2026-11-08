@@ -46,10 +46,10 @@ function cleanText(value: unknown): string {
     .replace(/&gt;/gi, ">")
     .replace(/&#39;/gi, "'")
     .replace(/&quot;/gi, '"')
-    .replace(/<script[\\s\\S]*?<\\/script>/gi, " ")
-    .replace(/<style[\\s\\S]*?<\\/style>/gi, " ")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
     .replace(/<[^>]+>/g, " ")
-    .replace(/\\s+/g, " ")
+    .replace(/\s+/g, " ")
     .trim();
 }
 
