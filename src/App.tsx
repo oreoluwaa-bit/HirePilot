@@ -3,7 +3,7 @@ import DiscoveryPage from "./DiscoveryPage";
 import {
   Activity, ArrowDownRight, ArrowUpRight, Bell, BriefcaseBusiness,
   Check, ChevronDown, CircleHelp, FileText, Filter, Globe2,
-  LayoutDashboard, ListChecks, Menu, Play, Plus, Search, Settings2,
+  LayoutDashboard, ListChecks, Menu, Play, Search, Settings2,
   ShieldCheck, Sparkles, Workflow, X
 } from "lucide-react";
 
@@ -36,7 +36,7 @@ const navItems = [
   { label: "Automation centre", icon: Workflow },
 ];
 
-function App() {
+export default function App() {
   const [activeNav, setActiveNav] = useState("Overview");
   const [query, setQuery] = useState("");
   const [jobs, setJobs] = useState<Job[]>(sampleJobs);
