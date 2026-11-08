@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Activity, ArrowDownRight, ArrowUpRight, Bell, BriefcaseBusiness,
   Check, ChevronDown, CircleHelp, FileText, Filter, Globe2,
@@ -13,8 +13,9 @@ type Job = {
   location: string;
   type: string;
   category: string;
-  match: number;
-  status: "Ready to review" | "Eligibility check" | "New";
+  match: number | null;
+  status: string;
+  source?: string;
   age: string;
 };
 
@@ -36,6 +37,9 @@ const navItems = [
 function App() {
   const [activeNav, setActiveNav] = useState("Overview");
   const [query, setQuery] = useState("");
+  const [jobs, setJobs] = useState<Job[]>(sampleJobs);
+  const [feedMode, setFeedMode] = useState<"preview" | "live" | "unavailable">("preview");
+  const [loadingFeed, setLoadingFeed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [notice, setNotice] = useState("");
   const filteredJobs = useMemo(
@@ -98,7 +102,7 @@ function App() {
               <h1>Good morning. <span>Let's get you hired.</span></h1>
               <p className="welcome-copy">Discover opportunities, find your fit, and let automation handle the busywork.</p>
             </div>
-            <button className="primary-button" onClick={startDemo}><Play size={16} fill="currentColor" /> Run discovery demo</button>
+            <button className="primary-button" onClick={startDemo} disabled={loadingFeed}><Play size={16} fill="currentColor" /> {loadingFeed ? "Refreshing..." : "Refresh job feed"}</button>
           </section>
 
           {notice && <div className="notice"><CircleHelp size={17} /><span>{notice}</span><button onClick={() => setNotice("")} aria-label="Dismiss"><X size={16} /></button></div>}
@@ -124,13 +128,13 @@ function App() {
 
           <div className="content-grid">
             <section className="panel jobs-panel">
-              <div className="panel-heading"><div><h2>Opportunity feed</h2><p>Preview layout · sample records, not live vacancies</p></div><button className="text-button" onClick={() => setActiveNav("Job discovery")}>Open discovery <ArrowUpRight size={15} /></button></div>
+              <div className="panel-heading"><div><h2>Opportunity feed</h2><p>{feedMode === "live" ? "Live vacancies from connected job sources" : feedMode === "unavailable" ? "API unavailable · showing preview records" : "Preview records · live job sources not connected yet"}</p></div><button className="text-button" onClick={() => setActiveNav("Job discovery")}>Open discovery <ArrowUpRight size={15} /></button></div>
               <div className="search-row"><div className="search-box"><Search size={17} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search roles, companies or skills..." /></div><button className="filter-button" onClick={() => setNotice("Job filters will be available when live job discovery is connected.")}><Filter size={17} /><span>Filters</span></button></div>
               <div className="job-list">
-                {filteredJobs.map((job) => <JobRow key={job.id} job={job} onSelect={() => setNotice(`${job.role} is illustrative sample data. Live job details and eligibility checks are not connected yet.`)} />)}
+                {filteredJobs.map((job) => <JobRow key={job.id} job={job} onSelect={() => setNotice(job.source ? `${job.role} · Source: ${job.source}. Open the employer listing to review full requirements and location eligibility.` : `${job.role} is illustrative sample data. Live job details and eligibility checks are not connected yet.`)} />)}
                 {filteredJobs.length === 0 && <div className="empty-state">No sample roles match that search.</div>}
               </div>
-              <div className="panel-footer"><span>Sample interface data only</span><button onClick={() => setActiveNav("Job discovery")}>Explore job discovery <ArrowUpRight size={14} /></button></div>
+              <div className="panel-footer"><span>{feedMode === "live" ? "Live feed · source attribution retained" : "Sample interface data only"}</span><button onClick={() => setActiveNav("Job discovery")}>Explore job discovery <ArrowUpRight size={14} /></button></div>
             </section>
 
             <section className="right-column">
@@ -162,7 +166,7 @@ function StatCard({ label, value, detail, icon, tone }: { label: string; value: 
 }
 
 function JobRow({ job, onSelect }: { job: Job; onSelect: () => void }) {
-  return <button className="job-row" onClick={onSelect}><div className="company-mark">{job.company.slice(0, 1)}</div><div className="job-main"><strong>{job.role}</strong><span>{job.company} <b>·</b> {job.location}</span><div className="job-tags"><small>{job.category}</small><small>{job.type}</small></div></div><div className="job-meta"><span className="match-score">{job.match}% match</span><span className={`job-status ${job.status === "Ready to review" ? "ready" : ""}`}>{job.status}</span><small>{job.age}</small></div><ArrowDownRight className="job-arrow" size={17} /></button>;
+  return <button className="job-row" onClick={onSelect}><div className="company-mark">{job.company.slice(0, 1)}</div><div className="job-main"><strong>{job.role}</strong><span>{job.company} <b>·</b> {job.location}</span><div className="job-tags"><small>{job.category}</small><small>{job.type}</small>{job.source && <small>{job.source}</small>}</div></div><div className="job-meta">{job.match !== null ? <span className="match-score">{job.match}% match</span> : <span className="job-status">Not matched</span>}<span className={`job-status ${job.status === "Ready to review" ? "ready" : ""}`}>{job.status}</span><small>{job.age}</small></div><ArrowDownRight className="job-arrow" size={17} /></button>;
 }
 
 function ChecklistItem({ title, description }: { title: string; description: string }) {
