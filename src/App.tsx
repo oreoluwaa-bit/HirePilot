@@ -50,11 +50,11 @@ function App() {
       const apiBase = (localStorage.getItem("hirepilot_api_url") || "").replace(/\/$/, "");
       const response = await fetch(apiBase + "/api/jobs?limit=50");
       if (!response.ok) throw new Error("Job API returned " + response.status);
-      const data = await response.json();
-      const liveJobs: Job[] = (data.jobs ?? []).map((item: any) => ({
-        id: item.id,
-        role: item.title,
-        company: item.company,
+      const data = await response.json() as { jobs?: Array<Record<string, any>> };
+      const liveJobs: Job[] = (data.jobs ?? []).map((item) => ({
+        id: String(item.id),
+        role: String(item.title ?? "Untitled role"),
+        company: String(item.company ?? "Unknown company"),
         location: item.location || "Location not specified",
         type: item.employment_type || "Not specified",
         category: item.category || "Job listing",
@@ -205,11 +205,9 @@ function StatCard({ label, value, detail, icon, tone }: { label: string; value: 
 }
 
 function JobRow({ job, onSelect }: { job: Job; onSelect: () => void }) {
-  return <button className="job-row" onClick={onSelect}><div className="company-mark">{job.company.slice(0, 1)}</div><div className="job-main"><strong>{job.role}</strong><span>{job.company} <b>·</b> {job.location}</span><div className="job-tags"><small>{job.category}</small><small>{job.type}</small>{job.source && <small>{job.source}</small>}</div></div><div className="job-meta">{job.match !== null ? <span className="match-score">{job.match}% match</span> : <span className="job-status">Not matched</span>}<span className={`job-status ${job.status === "Ready to review" ? "ready" : ""}`}>{job.status}</span><small>{job.age}</small></div><ArrowDownRight className="job-arrow" size={17} /></button>;
+  return <button className="job-row" onClick={onSelect}><div className="company-mark">{job.company.slice(0, 1)}</div><div className="job-main"><strong>{job.role}</strong><span>{job.company} <b>·</b> {job.location}</span><div className="job-tags"><small>{job.category}</small><small>{job.type}</small>{job.source && <small>{job.source}</small>}</div></div><div className="job-side">{job.match !== null ? <span className="match-score">{job.match}% match</span> : <span className="status-label">{job.status}</span>}<small>{job.age}</small></div></button>;
 }
 
 function ChecklistItem({ title, description }: { title: string; description: string }) {
-  return <div className="checklist-item"><span className="check-circle"><Plus size={14} /></span><div><strong>{title}</strong><p>{description}</p></div><ChevronDown size={15} /></div>;
+  return <div className="checklist-item"><span className="check-empty" /><div><strong>{title}</strong><p>{description}</p></div><ArrowDownRight size={15} /></div>;
 }
-
-export default App;
