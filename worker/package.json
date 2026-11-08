@@ -9,7 +9,7 @@
     "migrate:remote": "wrangler d1 migrations apply hirepilot-db --remote"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20261108.1",
+    "@cloudflare/workers-types": "^4.20260702.1",
     "typescript": "^5.7.2",
     "wrangler": "^4.45.0"
   }
